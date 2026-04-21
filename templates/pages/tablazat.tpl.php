@@ -1,33 +1,73 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Táblázat</title>
+    <style>
+        table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: 20px auto;
+
+        background: transparent;
+
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        border-radius: 8px;
+        overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #bcd6ff;
+            padding: 10px;
+            text-align: center;
+            color:black;
+        }
+
+        th {
+            background-color: #cfe8ff;
+            color: black;
+        }
+
+        tr {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transition: 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<h2 style="text-align:center;">Kutato táblázat adatai</h2>
+
 <table>
-    <caption>5. gyakorlat 1. feladat:<br>TÁBLÁZAT</caption>
     <tr>
-        <th>Employee</th>
-        <th>Salary</th>
-        <th>Bonus</th>
-        <th>Supervisor</th>
+        <th>ID</th>
+        <th>Név</th>
+        <th>Születés</th>
+        <th>Halál</th>
     </tr>
+    
+
+    <?php foreach ($adatok as $a): ?>
+        
     <tr>
-        <td>Stephen C. Cox</td>
-        <td>$300</td>
-        <td>$50</td>
-        <td>Bob</td>
+        <td><?= $a["fkod"] ?></td>
+        <td><?= $a["nev"] ?></td>
+        <td><?= $a["szul"] ?></td>
+        <td><?= $a["meghal"] ?></td>
     </tr>
-    <tr>
-        <td>Josephin Tan</td>
-        <td>$150</td>
-        <td>-</td>
-        <td>Annie</td>
-    </tr>
-    <tr>
-        <td>Joyce Ming</td>
-        <td>$200</td>
-        <td>$35</td>
-        <td>Andy</td>
-    </tr>
-    <tr>
-        <td>James A. Pentel</td>
-        <td>$175</td>
-        <td>$25</td>
-        <td>Annie</td>
-    </tr>
+    <?php endforeach; ?>
+
 </table>
+
+</body>
+</html>
