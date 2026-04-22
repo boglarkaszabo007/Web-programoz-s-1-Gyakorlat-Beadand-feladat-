@@ -8,7 +8,7 @@
 </head>
 <style>
     body {
-        text-align: center;
+        text-align: left;
         font-family: Arial;
         margin: 0;
         padding: 10px;
