@@ -92,3 +92,45 @@ footer {
     display: block;
     margin: 10px auto;
 }
+/* ettől lesz itt reszponzív az oldal. */
+@media (max-width: 768px){
+
+    body{
+        padding:10px;
+    }
+
+    div#wrapper{
+        flex-direction:column;
+    }
+
+    aside{
+        width:100%;
+    }
+
+    nav ul li{
+        text-align:center;
+    }
+
+    div#content img{
+        float:none;
+        display:block;
+        width:100%;
+        max-width:350px;
+        margin:15px auto;
+    }
+
+    header img{
+        float:none;
+        display:block;
+        margin:0 auto 10px auto;
+    }
+
+    header{
+        text-align:center;
+    }
+
+    div#content{
+        padding:15px;
+    }
+
+}
