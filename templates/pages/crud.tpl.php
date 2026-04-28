@@ -1,163 +1,99 @@
+<?php
+session_start();
+
+$conn = new mysqli("localhost","feltalalok","feltalalok2026.","feltalalok");
+$result = $conn->query("SELECT * FROM kutato ORDER BY fkod ASC");
+?>
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
     <title>Kutatók CRUD</title>
 
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
-        #formDiv {
-            display: none;
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+            background: transparent;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #bcd6ff;
+            padding: 10px;
+            text-align: center;
+            color:black;
+        }
+        th {
+            background-color: #cfe8ff;
+            color: black;
+        }
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.25);
         }
     </style>
 </head>
-<body class="bg-light">
 
-<div class="container py-4">
+<body>
 
-    <h2 class="mb-4 text-center">Kutatók kezelése</h2>
+<h2 style="text-align:center;">Kutatók adatai</h2>
 
-    <div class="d-flex justify-content-end mb-3">
-        <button class="btn btn-primary" onclick="showAddForm()">Új kutató hozzáadása</button>
-    </div>
+<!-- HOZZÁADÁS FORM -->
+<form method="post" action="/Feltalalokgyak/logicals/crud.php" style="width:80%; margin:auto;">
+    <h3>Új kutató hozzáadása</h3>
 
-    <!-- Reszponzív táblázat -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle">
-            <thead class="table-secondary">
-                <tr>
-                    <th>ID</th>
-                    <th>Név</th>
-                    <th>Született</th>
-                    <th>Meghalt</th>
-                    <th>Művelet</th>
-                </tr>
-            </thead>
-            <tbody id="tabla"></tbody>
-        </table>
-    </div>
+    <label>Név:</label>
+    <input type="text" name="nev" required>
 
-    <!-- Form -->
-    <div id="formDiv" class="card p-3 mt-4 shadow-sm">
-        <h4 id="formTitle">Új kutató</h4>
+    <label>Született:</label>
+    <input type="number" name="szul">
 
-        <input type="hidden" id="fkod">
+    <label>Meghalt:</label>
+    <input type="number" name="meghal">
 
-        <div class="mb-3">
-            <label class="form-label">Név:</label>
-            <input type="text" id="nev" class="form-control">
-        </div>
+    <button type="submit" name="add">Hozzáadás</button>
+</form>
 
-        <div class="mb-3">
-            <label class="form-label">Született (év):</label>
-            <input type="number" id="szul" class="form-control">
-        </div>
+<br><br>
 
-        <div class="mb-3">
-            <label class="form-label">Meghalt (év):</label>
-            <input type="number" id="meghal" class="form-control">
-        </div>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Név</th>
+        <th>Születés</th>
+        <th>Halál</th>
+        <th>Művelet</th>
+    </tr>
 
-        <div class="d-flex gap-2">
-            <button class="btn btn-success" onclick="saveData()">Mentés</button>
-            <button class="btn btn-secondary" onclick="hideForm()">Mégse</button>
-        </div>
-    </div>
+    <?php while ($a = $result->fetch_assoc()): ?>
+    <tr>
+        <td><?= $a["fkod"] ?></td>
+        <td><?= $a["nev"] ?></td>
+        <td><?= $a["szul"] ?></td>
+        <td><?= $a["meghal"] ?></td>
+        <td>
+            <!-- SZERKESZTÉS FORM -->
+            <form method="post" action="/Feltalalokgyak/logicals/crud.php" style="display:inline;">
+                <input type="hidden" name="fkod" value="<?= $a["fkod"] ?>">
+                <input type="text" name="nev" value="<?= $a["nev"] ?>">
+                <input type="number" name="szul" value="<?= $a["szul"] ?>">
+                <input type="number" name="meghal" value="<?= $a["meghal"] ?>">
+                <button type="submit" name="update">Mentés</button>
+            </form>
 
-</div>
+            <!-- TÖRLÉS -->
+            <a href="/Feltalalokgyak/logicals/crud.php?delete=<?= $a["fkod"] ?>"
+               onclick="return confirm('Biztos törlöd?')">Törlés</a>
+        </td>
+    </tr>
+    <?php endwhile; ?>
 
-<script>
-// *** VÉGLEGES, HELYES API ÚTVONAL ***
-const API = "/Feltalalokgyak/logicals/crud.php";
-
-// LISTÁZÁS
-function loadData() {
-    fetch(API + "?action=list")
-        .then(r => r.json())
-        .then(data => {
-            let html = "";
-            data.forEach(k => {
-                html += `
-                    <tr>
-                        <td>${k.fkod}</td>
-                        <td>${k.nev}</td>
-                        <td>${k.szul ?? ""}</td>
-                        <td>${k.meghal ?? ""}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning" onclick="editItem(${k.fkod}, '${k.nev}', '${k.szul}', '${k.meghal}')">Szerkesztés</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteItem(${k.fkod})">Törlés</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            document.getElementById("tabla").innerHTML = html;
-        });
-}
-
-loadData();
-
-// FORM MEGJELENÍTÉSE
-function showAddForm() {
-    document.getElementById("formTitle").innerText = "Új kutató hozzáadása";
-    document.getElementById("fkod").value = "";
-    document.getElementById("nev").value = "";
-    document.getElementById("szul").value = "";
-    document.getElementById("meghal").value = "";
-    document.getElementById("formDiv").style.display = "block";
-}
-
-function hideForm() {
-    document.getElementById("formDiv").style.display = "none";
-}
-
-// SZERKESZTÉS
-function editItem(fkod, nev, szul, meghal) {
-    document.getElementById("formTitle").innerText = "Kutató szerkesztése";
-    document.getElementById("fkod").value = fkod;
-    document.getElementById("nev").value = nev;
-    document.getElementById("szul").value = szul;
-    document.getElementById("meghal").value = meghal;
-    document.getElementById("formDiv").style.display = "block";
-}
-
-// MENTÉS
-function saveData() {
-    let fkod = document.getElementById("fkod").value;
-    let data = {
-        nev: document.getElementById("nev").value,
-        szul: document.getElementById("szul").value,
-        meghal: document.getElementById("meghal").value
-    };
-
-    let action = "add";
-
-    if (fkod !== "") {
-        action = "update";
-        data.fkod = fkod;
-    }
-
-    fetch(API + "?action=" + action, {
-        method: "POST",
-        body: JSON.stringify(data)
-    })
-    .then(r => r.json())
-    .then(() => {
-        hideForm();
-        loadData();
-    });
-}
-
-// TÖRLÉS
-function deleteItem(fkod) {
-    if (!confirm("Biztos törlöd?")) return;
-
-    fetch(API + "?action=delete&fkod=" + fkod)
-        .then(r => r.json())
-        .then(() => loadData());
-}
-</script>
+</table>
 
 </body>
 </html>
+
+<?php $conn->close(); ?>
