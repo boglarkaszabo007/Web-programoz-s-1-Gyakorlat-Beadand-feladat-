@@ -17,10 +17,12 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     $db   = "feltalalok";
 }
 
-$conn = new mysqli($host,$user,$pass,$db);
-
-if($conn->connect_error){
-    die($conn->connect_error);
+try {
+    $conn = new PDO("mysql:host=$host;dbname=$db", $user, $pass,
+                            array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
+    $conn->query('SET NAMES utf8 COLLATE utf8_hungarian_ci');
+} catch(Exception $e) {
+    die("Adatbázis hiba: " . $e->getMessage());
 }
 
 ?>

@@ -1,8 +1,6 @@
 <?php
 session_start();
 
-$conn = new mysqli("localhost","feltalalok","feltalalok2026.","feltalalok");
-$result = $conn->query("SELECT * FROM kutato ORDER BY fkod ASC");
 ?>
 
 <!DOCTYPE html>
@@ -42,19 +40,21 @@ $result = $conn->query("SELECT * FROM kutato ORDER BY fkod ASC");
 <h2 style="text-align:center;">Kutatók adatai</h2>
 
 <!-- HOZZÁADÁS FORM -->
-<form method="post" action="/Feltalalokgyak/logicals/crud.php" style="width:80%; margin:auto;">
-    <h3>Új kutató hozzáadása</h3>
+<form method="post" action="/Feltalalokgyak/logicals/crudkutato.php" style="width:80%; margin:auto;">
+    <h3>Új kutató / Módosítás</h3>
+    
+    <input type="hidden" id="Fkod" name="fkod" value="">
 
     <label>Név:</label>
-    <input type="text" name="nev" required>
+    <input type="text" id="Nev" name="nev" required>
 
     <label>Született:</label>
-    <input type="number" name="szul">
+    <input type="number" id="Szul" name="szul">
 
-    <label>Meghalt:</label>
-    <input type="number" name="meghal">
+    <label>Meghal:</label>
+    <input type="number" id="Meghal" name="meghal">
 
-    <button type="submit" name="add">Hozzáadás</button>
+    <button type="submit" name="add" id="SubmitBtn">Hozzáadás</button>
 </form>
 
 <br><br>
@@ -67,33 +67,93 @@ $result = $conn->query("SELECT * FROM kutato ORDER BY fkod ASC");
         <th>Halál</th>
         <th>Művelet</th>
     </tr>
+    <tbody id="Results">
 
-    <?php while ($a = $result->fetch_assoc()): ?>
-    <tr>
-        <td><?= $a["fkod"] ?></td>
-        <td><?= $a["nev"] ?></td>
-        <td><?= $a["szul"] ?></td>
-        <td><?= $a["meghal"] ?></td>
-        <td>
-            <!-- SZERKESZTÉS FORM -->
-            <form method="post" action="/Feltalalokgyak/logicals/crud.php" style="display:inline;">
-                <input type="hidden" name="fkod" value="<?= $a["fkod"] ?>">
-                <input type="text" name="nev" value="<?= $a["nev"] ?>">
-                <input type="number" name="szul" value="<?= $a["szul"] ?>">
-                <input type="number" name="meghal" value="<?= $a["meghal"] ?>">
-                <button type="submit" name="update">Mentés</button>
-            </form>
-
-            <!-- TÖRLÉS -->
-            <a href="/Feltalalokgyak/logicals/crud.php?delete=<?= $a["fkod"] ?>"
-               onclick="return confirm('Biztos törlöd?')">Törlés</a>
-        </td>
-    </tr>
-    <?php endwhile; ?>
-
+    </tbody>
 </table>
 
 </body>
 </html>
 
-<?php $conn->close(); ?>
+<script>
+    const Api = '/Feltalalokgyak/logicals/crudkutato.php'; 
+    const NevInput = document.getElementById("Nev");
+    const SzulInput = document.getElementById("Szul");
+    const MeghalInput = document.getElementById("Meghal");
+    const FkodInput = document.getElementById("Fkod");
+    const SubmitBtn = document.getElementById("SubmitBtn");
+
+    function CreateFunctions(RecordData) {
+        const Cell = document.createElement('td');
+        
+        // Törlés gomb
+        const Removebtn = document.createElement('button');
+        Removebtn.textContent = "Törlés";
+        Removebtn.style.marginRight = "5px";
+        Removebtn.addEventListener('click', () => {
+            if(confirm("Biztosan törlöd?")) {
+                fetch(Api, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: RecordData.fkod })
+                })
+                .then(res => res.json())
+                .then(result => {
+                    if(result.Hiba) alert("Hiba: " + result.Hiba);
+                    else GetData();
+                });
+            }
+        });
+
+        // SZERKESZTÉS GOMB LÉTREHOZÁSA (Ez hiányzott!)
+        const Updatebtn = document.createElement('button');
+        Updatebtn.textContent = "Szerkesztés";
+        Updatebtn.addEventListener('click', () => {
+        // Adatok betöltése a form mezőibe
+        document.getElementById("Fkod").value = RecordData.fkod;
+        document.getElementById("Nev").value = RecordData.nev;
+        document.getElementById("Szul").value = RecordData.szul;
+        document.getElementById("Meghal").value = RecordData.meghal;
+        
+        // Gomb feliratának módosítása
+        document.getElementById("SubmitBtn").textContent = "Módosítás mentése";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        Cell.appendChild(Removebtn);
+        Cell.appendChild(Updatebtn);
+        return Cell;
+    }
+
+    function GetData() {
+        const ResponseArea = document.getElementById('Results');
+        ResponseArea.innerHTML = ""; 
+
+        fetch(Api)
+        .then(res => res.json())
+        .then(data => {
+            if (data.Hiba) {
+                console.error("Szerver hiba:", data.Hiba);
+                return;
+            }
+            if(data.Kutatok) {
+                data.Kutatok.forEach(inventor => {
+                    const Row = document.createElement('tr');
+                    Row.innerHTML = `
+                        <td>${inventor.fkod}</td>
+                        <td>${inventor.nev}</td>
+                        <td>${inventor.szul}</td>
+                        <td>${inventor.meghal}</td>
+                    `;
+                    Row.appendChild(CreateFunctions(inventor));
+                    ResponseArea.appendChild(Row);
+                });
+            }
+        })
+        .catch(err => console.error("Hiba a lekérésnél:", err));
+    }
+
+    document.addEventListener("DOMContentLoaded", GetData);
+</script>
+
+<?php ?>
