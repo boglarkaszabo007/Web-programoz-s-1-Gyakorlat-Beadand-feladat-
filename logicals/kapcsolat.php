@@ -1,17 +1,20 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $uzenet = trim($_POST['uzenet'] ?? '');
     $errors = [];
 
-    if ($uzenet === '' || mb_strlen($uzenet) < 10) {
-        $errors[] = "Az üzenet legalább 10 karakter legyen.";
+    if ($uzenet === '' || mb_strlen($uzenet) < 5) {
+        $errors[] = "Az üzenet legalább 5 karakter legyen.";
     }
 
-    // Felhasználó adatok
-    if (isset($_SESSION['user'])) {
-        $uid = $_SESSION['user']['id'];
+    if (!empty($_SESSION['felhasznalo_id'])) {
+        $uid = $_SESSION['felhasznalo_id'];
     } else {
         $uid = null;
     }
@@ -38,14 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['success'] = "Üzenet sikeresen elküldve.";
 
         } catch (PDOException $e) {
-            $_SESSION['errors'] = ["Adatbázis hiba."];
+            $_SESSION['errors'] = ["Adatbázis hiba: " . $e->getMessage()];
         }
 
     } else {
         $_SESSION['errors'] = $errors;
     }
 
-    // VISSZA A KAPCSOLAT OLDALRA
     header("Location: /Feltalalokgyak/kapcsolat");
     exit;
 }

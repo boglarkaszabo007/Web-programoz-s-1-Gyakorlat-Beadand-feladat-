@@ -4,102 +4,139 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 include __DIR__ . "/../Database/database.php";
-header('Content-Type: application/json');
 
 switch ($_SERVER['REQUEST_METHOD']) {
+
     case 'GET':
+        header('Content-Type: application/json');
+
         try {
             $Result = $conn->query("SELECT * FROM kutato");
+            $Kutatok = $Result->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($Kutatok as &$row) {
+                foreach ($row as $key => $value) {
+                    if ($value === null) {
+                        $row[$key] = "";
+                    }
+                }
+            }
+
             echo json_encode([
                 'Hiba' => null,
-                'Kutatok' => $Result->fetchAll(PDO::FETCH_ASSOC)
+                'Kutatok' => $Kutatok
             ]);
+
         } catch (Exception $e) {
-            echo json_encode(['Hiba' => 'Sikertelen adat lekérés!']);
+            echo json_encode([
+                'Hiba' => 'Sikertelen adat lekérés! ' . $e->getMessage()
+            ]);
         }
         break;
 
+
     case 'POST':
-        $NewInventor = !empty($_POST) ? $_POST : json_decode(file_get_contents("php://input"), true);
-        
-        if (empty($NewInventor['nev']) || empty($NewInventor['szul'])) {
-            header("Location: ../index.php?crud&error=hianyos_adatok");
-            exit(); 
+        $NewInventor = $_POST;
+
+        if (empty($NewInventor['nev'])) {
+            header("Location: /Feltalalokgyak/index.php?crud&error=nev_hiany");
+            exit;
+        }
+
+        $szul   = !empty($NewInventor['szul']) ? (int)$NewInventor['szul'] : null;
+        $meghal = !empty($NewInventor['meghal']) ? (int)$NewInventor['meghal'] : null;
+
+        if ($szul !== null && !preg_match('/^\d{4}$/', (string)$szul)) {
+            header("Location: /Feltalalokgyak/index.php?crud&error=szul_format");
+            exit;
+        }
+
+        if ($meghal !== null && !preg_match('/^\d{4}$/', (string)$meghal)) {
+            header("Location: /Feltalalokgyak/index.php?crud&error=meghal_format");
+            exit;
+        }
+
+        if ($szul !== null && $meghal !== null && $szul > $meghal) {
+            header("Location: /Feltalalokgyak/index.php?crud&error=ev_logika");
+            exit;
         }
 
         try {
             if (!empty($NewInventor['fkod'])) {
-                // UPDATE (Módosítás)
-                $Statment = $conn->prepare("UPDATE kutato SET nev = :nev, szul = :szul, meghal = :meghal WHERE fkod = :fkod");
-                $Statment->execute([
+
+                $Statement = $conn->prepare("
+                    UPDATE kutato 
+                    SET nev = :nev, szul = :szul, meghal = :meghal 
+                    WHERE fkod = :fkod
+                ");
+
+                $Statement->execute([
                     'nev' => $NewInventor['nev'],
-                    'szul' => $NewInventor['szul'],
-                    'meghal' => $NewInventor['meghal'],
+                    'szul' => $szul,
+                    'meghal' => $meghal,
                     'fkod' => $NewInventor['fkod']
                 ]);
+
             } else {
-                // INSERT (Új felvétel)
-                $Statment = $conn->prepare("INSERT INTO kutato(nev, szul, meghal) VALUES(:nev, :szul, :meghal)");
-                $Statment->execute([
+
+                $Statement = $conn->prepare("
+                    INSERT INTO kutato(nev, szul, meghal) 
+                    VALUES(:nev, :szul, :meghal)
+                ");
+
+                $Statement->execute([
                     'nev' => $NewInventor['nev'],
-                    'szul' => $NewInventor['szul'],
-                    'meghal' => $NewInventor['meghal']
+                    'szul' => $szul,
+                    'meghal' => $meghal
                 ]);
             }
+
         } catch (Exception $e) {
-            header("Location: ../index.php?crud&error=adatbazis_hiba");
-            exit();
+            header("Location: /Feltalalokgyak/index.php?crud&error=adatbazis");
+            exit;
         }
-        header("Location: ../index.php?crud"); 
-        exit();
+
+        header("Location: /Feltalalokgyak/index.php?crud");
+        exit;
+
 
     case 'DELETE':
+        header('Content-Type: application/json');
+
         $Data = json_decode(file_get_contents("php://input"), true);
-        // Itt az 'id' kulcsot kell ellenőrizni!
+
         if (!isset($Data['id']) || empty($Data['id'])) {
-            echo json_encode(['Hiba' => 'Hiányos azonosító a törléshez!']);
-            exit;
-        }
-        try {
-            $Statment = $conn->prepare("DELETE FROM kutato WHERE fkod = :id");
-            $Statment->execute(['id' => $Data['id']]);
-            echo json_encode(['Hiba' => null]);
-        } catch (Exception $e) {
-            echo json_encode(['Hiba' => 'Sikertelen törlés az adatbázisból!']);
-        }
-        break;
-    case 'PUT':
-        $InventorUpdate = json_decode(file_get_contents("php://input"), true);
-        if (
-            !isset($InventorUpdate['id'], $InventorUpdate['nev'], $InventorUpdate['szul'], $InventorUpdate['meghal']) ||
-            empty($InventorUpdate['id']) || empty($InventorUpdate['nev']) ||
-            empty($InventorUpdate['szul']) || empty($InventorUpdate['meghal'])
-        ) {
-            echo json_encode(['Hiba' => 'Hiányos adatok!']);
-            exit;
-        }
-        try {
-            $Statment = $conn->prepare("UPDATE kutato SET
-                                                nev = :nev,
-                                                szul = :szul,
-                                                meghal = :meghal
-                                            WHERE fkod = :id");
-            $Statment->execute([
-                'id' => $InventorUpdate['id'],
-                'nev' => $InventorUpdate['nev'],
-                'szul' => $InventorUpdate['szul'],
-                'meghal' => $InventorUpdate['meghal']
+            echo json_encode([
+                'Hiba' => 'Hiányos azonosító a törléshez!'
             ]);
+            exit;
+        }
+
+        try {
+            $Statement = $conn->prepare("
+                DELETE FROM kutato 
+                WHERE fkod = :id
+            ");
+
+            $Statement->execute([
+                'id' => $Data['id']
+            ]);
+
             echo json_encode([
                 'Hiba' => null
             ]);
+
         } catch (Exception $e) {
             echo json_encode([
-                'Hiba' => 'Sikertelen módosítás!'
+                'Hiba' => 'Sikertelen törlés az adatbázisból! ' . $e->getMessage()
             ]);
         }
         break;
+
+
     default:
+        header('Content-Type: application/json');
+
         echo json_encode([
             'Hiba' => 'Nem támogatott kérés!'
         ]);

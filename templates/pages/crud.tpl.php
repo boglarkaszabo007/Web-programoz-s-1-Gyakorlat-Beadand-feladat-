@@ -1,6 +1,8 @@
-<?php
-session_start();
 
+<?
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,6 +33,41 @@ session_start();
         }
         tr:nth-child(even) {
             background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ===== GOMB STÍLUS ===== */
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        /* Törlés - piros */
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Szerkesztés - világoskék */
+        .edit-btn {
+            background-color: #3498db;
+        }
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Submit gomb (extra, hogy ez is szép legyen) */
+        #SubmitBtn {
+            background-color: #2ecc71;
+        }
+        #SubmitBtn:hover {
+            background-color: #27ae60;
         }
     </style>
 </head>
@@ -67,9 +104,7 @@ session_start();
         <th>Halál</th>
         <th>Művelet</th>
     </tr>
-    <tbody id="Results">
-
-    </tbody>
+    <tbody id="Results"></tbody>
 </table>
 
 </body>
@@ -86,10 +121,12 @@ session_start();
     function CreateFunctions(RecordData) {
         const Cell = document.createElement('td');
         
-        // Törlés gomb
+        // ===== TÖRLÉS GOMB =====
         const Removebtn = document.createElement('button');
         Removebtn.textContent = "Törlés";
+        Removebtn.classList.add("delete-btn");
         Removebtn.style.marginRight = "5px";
+
         Removebtn.addEventListener('click', () => {
             if(confirm("Biztosan törlöd?")) {
                 fetch(Api, {
@@ -105,19 +142,20 @@ session_start();
             }
         });
 
-        // SZERKESZTÉS GOMB LÉTREHOZÁSA (Ez hiányzott!)
+        // ===== SZERKESZTÉS GOMB =====
         const Updatebtn = document.createElement('button');
         Updatebtn.textContent = "Szerkesztés";
+        Updatebtn.classList.add("edit-btn");
+
         Updatebtn.addEventListener('click', () => {
-        // Adatok betöltése a form mezőibe
-        document.getElementById("Fkod").value = RecordData.fkod;
-        document.getElementById("Nev").value = RecordData.nev;
-        document.getElementById("Szul").value = RecordData.szul;
-        document.getElementById("Meghal").value = RecordData.meghal;
-        
-        // Gomb feliratának módosítása
-        document.getElementById("SubmitBtn").textContent = "Módosítás mentése";
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById("Fkod").value = RecordData.fkod;
+            document.getElementById("Nev").value = RecordData.nev;
+            document.getElementById("Szul").value = RecordData.szul;
+            document.getElementById("Meghal").value = RecordData.meghal;
+
+            document.getElementById("SubmitBtn").textContent = "Módosítás mentése";
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         Cell.appendChild(Removebtn);
@@ -136,15 +174,18 @@ session_start();
                 console.error("Szerver hiba:", data.Hiba);
                 return;
             }
+
             if(data.Kutatok) {
                 data.Kutatok.forEach(inventor => {
                     const Row = document.createElement('tr');
+
                     Row.innerHTML = `
                         <td>${inventor.fkod}</td>
                         <td>${inventor.nev}</td>
                         <td>${inventor.szul}</td>
                         <td>${inventor.meghal}</td>
                     `;
+
                     Row.appendChild(CreateFunctions(inventor));
                     ResponseArea.appendChild(Row);
                 });
@@ -154,6 +195,47 @@ session_start();
     }
 
     document.addEventListener("DOMContentLoaded", GetData);
+
+    const params = new URLSearchParams(window.location.search);
+
+    //errorok frontend része
+    const error = params.get("error");
+
+    if (error) {
+        let message = "";
+
+        switch (error) {
+            case "nev_hiany":
+                message = "A név megadása kötelező!";
+                break;
+
+            case "szul_format":
+                message = "A születési évnek pontosan 4 számjegyűnek kell lennie!";
+                break;
+
+            case "meghal_format":
+                message = "A halálozási évnek pontosan 4 számjegyűnek kell lennie!";
+                break;
+
+            case "ev_logika":
+                message = "A születési év nem lehet nagyobb, mint a halálozási év!";
+                break;
+
+            case "adatbazis":
+                message = "Adatbázis hiba történt!";
+                break;
+        }
+
+        if (message !== "") {
+            alert(message);
+
+            window.history.replaceState(
+                {},
+                document.title,
+                "/Feltalalokgyak/index.php?crud"
+            );
+        }
+    }
 </script>
 
 <?php ?>

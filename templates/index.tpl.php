@@ -5,16 +5,24 @@
 <head>
 	<meta charset="utf-8">
 	<title><?= $ablakcim['cim'] . ( (isset($ablakcim['mottó'])) ? ('|' . $ablakcim['mottó']) : '' ) ?></title>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="./styles/stilus.css" type="text/css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<?php if(file_exists('./styles/'.$keres['fajl'].'.css')) { ?><link rel="stylesheet" href="./styles/<?= $keres['fajl']?>.css" type="text/css"><?php } ?>
 </head>
 <body>
 	<header>
-		<img src="./images/<?=$fejlec['kepforras']?>" alt="<?=$fejlec['kepalt']?>" class="logo">
-		<h1><?= $fejlec['cim'] ?></h1>
-		<?php if (isset($fejlec['motto'])) { ?><h2><?= $fejlec['motto'] ?></h2><?php } ?>
-		<?php if(isset($_SESSION['login'])) { ?>Bejelentkezve: <strong><?= $_SESSION['csn']." ".$_SESSION['un']." (".$_SESSION['login'].")" ?></strong><?php } ?>
+		<div class = "header-top">
+			<img src="./images/<?=$fejlec['kepforras']?>" alt="<?=$fejlec['kepalt']?>" class="logo">
+			<h1><?= $fejlec['cim'] ?></h1>
+			<?php if (isset($fejlec['motto'])) { ?><h2><?= $fejlec['motto'] ?></h2><?php } ?>
+		</div>
+		<?php if(isset($_SESSION['login'])) { ?>
+			<div class="login-info">
+				Bejelentkezve: <strong><?= $_SESSION['csn']." ".$_SESSION['un']." (".$_SESSION['login'].")" ?></strong>
+			</div>
+    	<?php } ?>
+		
 	</header>
     <div id="wrapper">
         <aside id="nav">
@@ -22,13 +30,14 @@
                 <ul>
 					<?php foreach ($oldalak as $url => $oldal) { ?>
 						<?php if(! isset($_SESSION['login']) && $oldal['menun'][0] || isset($_SESSION['login']) && $oldal['menun'][1]) { ?>
-							<li<?= (($oldal == $keres) ? ' class="active"' : '') ?>>
-							<a href="<?= ($url == '/') ? '.' : $url ?>">
-							<?= $oldal['szoveg'] ?></a>
+							<li class="<?= ($oldal == $keres ? 'active ' : '') . ($oldal['szoveg'] == 'Belépés' || $oldal['szoveg'] == 'Kilépés' ? 'login' : '') ?>">
+								<a href="<?= ($url == '/') ? '.' : $url ?>">
+									<?= $oldal['szoveg'] ?>
+								</a>
 							</li>
 						<?php } ?>
 					<?php } ?>
-                </ul>
+				</ul>
             </nav>
         </aside>
         <div id="content">

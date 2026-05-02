@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 if(isset($_POST['felhasznalo']) && isset($_POST['jelszo'])) {
     try {
         // Kapcsolódás

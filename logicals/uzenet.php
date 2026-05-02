@@ -1,32 +1,33 @@
 <?php
-session_start();
 
-$conn = new mysqli("localhost","feltalalok","feltalalok2026.","feltalalok");
+try {
+    $conn = new PDO(
+        "mysql:host=localhost;dbname=feltalalok;charset=utf8",
+        "feltalalok",
+        "feltalalok2026.",
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]
+    );
 
-if($conn->connect_error)
-{
-    die("Kapcsolati hiba");
-}
-
-$sql = "SELECT
-        uzenetek.message,
-        uzenetek.created_at,
-        COALESCE(CONCAT(felhasznalok.csaladi_nev, ' ', felhasznalok.uto_nev), 'Vendég') AS kuldo
+    $sql = "
+        SELECT
+            uzenetek.message,
+            uzenetek.created_at,
+            COALESCE(
+                NULLIF(TRIM(CONCAT(felhasznalok.csaladi_nev, ' ', felhasznalok.uto_nev)), ''),
+                'Vendég'
+            ) AS kuldo
         FROM uzenetek
         LEFT JOIN felhasznalok
-        ON uzenetek.user_id = felhasznalok.id
-        ORDER BY uzenetek.created_at DESC";
-        
-$result = $conn->query($sql);
+            ON uzenetek.user_id = felhasznalok.id
+        ORDER BY uzenetek.created_at DESC
+    ";
 
-$uzenetek = array();
+    $stmt = $conn->query($sql);
+    $uzenetek = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-while($row = $result->fetch_assoc())
-{
-    $uzenetek[] = $row;
+} catch (PDOException $e) {
+    die("Kapcsolati hiba: " . $e->getMessage());
 }
-
-$conn->close();
-
-include("uzenetek.tpl.php");
 ?>

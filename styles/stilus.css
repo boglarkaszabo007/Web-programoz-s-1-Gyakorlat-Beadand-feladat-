@@ -1,117 +1,144 @@
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #4facfe, #00f2fe);
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(120deg, #4facfe, #00f2fe);
     padding: 20px;
     min-height: 100vh;
     margin: 0;
 }
 
+header, nav, #content, footer {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
 header {
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 15px;
+    padding: 15px 20px;
     margin-bottom: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    text-align: left;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+header .header-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 header img {
-    float: left;
-    margin: 0 15px 0 0;
+    width: 45px;
+    height: auto;
+}
+
+header h1 {
+    margin: 0;
+    font-weight: 600;
 }
 
 div#wrapper {
     display: flex;
+    flex-direction: column;
     gap: 15px;
 }
 
 aside {
-    width: 220px;
+    width: 100%;
 }
 
 nav {
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 10px 0;
+    padding: 10px 15px;
 }
 
 nav ul {
-    list-style-type: none;
+    list-style: none;
     margin: 0;
     padding: 0;
+
+    display: flex;
+    align-items: center;
 }
 
 nav ul li {
-    padding: 10px 20px;
+    position: relative;
 }
 
-nav ul li.active {
-    background-color: rgba(79, 172, 254, 0.2);
-    border-left: 5px solid #4facfe;
+nav ul li.login {
+    margin-left: auto;
 }
 
 nav ul a {
     text-decoration: none;
     color: #1f2937;
-    font-weight: bold;
+    font-weight: 600;
+    padding: 8px 12px;
+    transition: 0.3s;
 }
 
-nav ul a:hover {
-    color: #4facfe;
+nav ul a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0%;
+    height: 2px;
+    background: #4facfe;
+    transition: 0.3s;
 }
 
-div#content {
-    flex: 1;
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.92);
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    text-align: left;
+nav ul a:hover::after {
+    width: 100%;
 }
 
-div#content img {
+nav ul li.active a::after {
+    width: 100%;
+}
+
+#content {
+    padding: 25px;
+}
+
+#content img {
     float: right;
     width: 23em;
     margin: 0 0 20px 20px;
-    border-radius: 10px;
-    border: 2px solid #4facfe;
+    border-radius: 12px;
+    border: 2px solid rgba(79, 172, 254, 0.4);
 }
 
 footer {
-    border-radius: 12px;
     margin-top: 15px;
-    padding: 10px 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    padding: 12px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-size: 14px;
 }
+
 .logo {
     width: 40px;
-    height: auto;
-    display: block;
     margin: 10px auto;
 }
-/* ettől lesz itt reszponzív az oldal. */
+
+
 @media (max-width: 768px){
 
     body{
         padding:10px;
     }
 
-    div#wrapper{
-        flex-direction:column;
+    nav ul{
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
     }
 
-    aside{
-        width:100%;
+    nav ul li.login {
+        margin-left: 0; 
     }
 
-    nav ul li{
-        text-align:center;
-    }
-
-    div#content img{
+    #content img{
         float:none;
         display:block;
         width:100%;
@@ -119,18 +146,8 @@ footer {
         margin:15px auto;
     }
 
-    header img{
-        float:none;
-        display:block;
-        margin:0 auto 10px auto;
-    }
-
     header{
+        flex-direction: column;
         text-align:center;
     }
-
-    div#content{
-        padding:15px;
-    }
-
 }

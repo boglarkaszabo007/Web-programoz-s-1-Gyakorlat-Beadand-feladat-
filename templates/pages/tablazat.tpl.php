@@ -3,52 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Táblázat</title>
-    <style>
-        table {
-        border-collapse: collapse;
-        width: 80%;
-        margin: 20px auto;
-
-        background: transparent;
-
-        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-        border-radius: 8px;
-        overflow: hidden;
-        }
-
-        th, td {
-            border: 1px solid #bcd6ff;
-            padding: 10px;
-            text-align: center;
-            color:black;
-        }
-
-        th {
-            background-color: #cfe8ff;
-            color: black;
-        }
-
-        tr {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.25);
-        }
-
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.4);
-            transition: 0.2s;
-        }
-    </style>
 </head>
 
 <body>
+<style>
+    .view-table {
+    border-collapse: collapse !important;
+    width: 80% !important;
+    margin: 20px auto !important;
+    background: transparent !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    }
 
+    .view-table th,
+    .view-table td {
+        border: 1px solid #bcd6ff !important;
+        padding: 10px !important;
+        text-align: center !important;
+        color: black !important;
+    }
+
+    .view-table th {
+        background-color: #cfe8ff !important;
+    }
+
+    .view-table tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.25) !important;
+    }
+
+    .view-table tr:hover {
+        background-color: rgba(255, 255, 255, 0.4) !important;
+        transition: 0.2s;
+    }
+
+</style>
 
 <h2 style="text-align:center;">Kutato táblázat adatai</h2>
 
-<table>
+<table class ="view-table">
     <tr>
         <th>ID</th>
         <th>Név</th>
