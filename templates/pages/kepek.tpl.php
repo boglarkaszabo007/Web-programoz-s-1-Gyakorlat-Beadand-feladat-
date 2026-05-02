@@ -1,26 +1,18 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 
 $loggedIn = isset($_SESSION['felhasznalo_id']);
 
-try {
-    $dbh = new PDO(
-        'mysql:host=localhost;dbname=feltalalok;charset=utf8',
-        'feltalalok',
-        'feltalalok2026.',
-        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
-    );
-} catch (PDOException $e) {
-    die("Adatbázis kapcsolat hiba: " . $e->getMessage());
-}
+$dbh = new PDO(
+    'mysql:host=localhost;dbname=feltalalok',
+    'feltalalok',
+    'feltalalok2026.'
+);
 ?>
 
 <?php if($loggedIn): ?>
-
 <style>
-.upload-box {
+   .upload-box {
     display: flex;
     gap: 10px;
     align-items: center;
@@ -29,34 +21,26 @@ try {
     border-radius: 10px;
     width: fit-content;
     margin-bottom: 15px;
-}
+    }
+    .upload-box input[type="file"] {
+        background: white;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    .upload-box button {
+        background-color: #2d6cdf;
+        color: white;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
 
-.upload-box input[type="file"] {
-    background: white;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-.upload-box button {
-    background-color: #2d6cdf;
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.upload-box button:hover {
-    background-color: #1f4fb3;
-}
-
-.gallery img {
-    width: 200px;
-    margin: 10px;
-    border-radius: 8px;
-}
+    .upload-box button:hover {
+        background-color: #1f4fb3;
+    }
 </style>
 
 <form action="/Feltalalokgyak/logicals/kepek.php"
@@ -64,7 +48,7 @@ try {
       enctype="multipart/form-data">
 
     <div class="upload-box">
-        <input type="file" name="kep" required>
+        <input type="file" name="kep">
         <button type="submit">Feltöltés</button>
     </div>
 
@@ -80,13 +64,11 @@ try {
 
 <hr>
 
-<div class="gallery">
 <?php
-$sql = "SELECT fajlnev FROM kepek ORDER BY id DESC";
+$sql = "SELECT fajlnev FROM kepek";
 $stmt = $dbh->query($sql);
 
 while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    echo "<img src='/Feltalalokgyak/uploads/" . htmlspecialchars($row['fajlnev']) . "'>";
+    echo "<img src='/Feltalalokgyak/uploads/".$row['fajlnev']."' width='200'>";
 }
 ?>
-</div>

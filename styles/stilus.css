@@ -1,48 +1,69 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: 'Montserrat', sans-serif;
-    background: linear-gradient(120deg, #4facfe, #00f2fe);
-    padding: 20px;
+    font-family:'Times New Roman', Times, serif !important;
+    background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.35), transparent 35%),
+        linear-gradient(120deg, #4facfe, #00f2fe);
+    padding: 16px;
     min-height: 100vh;
     margin: 0;
+    color: #1f2937;
 }
 
 header, nav, #content, footer {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+div#wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
 header {
-    padding: 15px 20px;
-    margin-bottom: 15px;
-
+    padding: 26px 34px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 5px;
+    gap: 12px;
+    margin-bottom: 20px;
+
 }
 
 header .header-top {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
 }
 
 header img {
-    width: 45px;
-    height: auto;
+    width: 58px;
+    height: 58px;
+    border-radius: 14px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
 }
 
 header h1 {
     margin: 0;
-    font-weight: 600;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
-div#wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+header p,
+header div:not(.header-top) {
+    margin-top: 8px;
+    font-size: 18px;
 }
 
 aside {
@@ -50,16 +71,17 @@ aside {
 }
 
 nav {
-    padding: 10px 15px;
+    padding: 10px 18px;
+    margin-bottom: 10px;
 }
 
 nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
-
     display: flex;
     align-items: center;
+    gap: 14px;
 }
 
 nav ul li {
@@ -71,83 +93,123 @@ nav ul li.login {
 }
 
 nav ul a {
+    display: block;
     text-decoration: none;
     color: #1f2937;
-    font-weight: 600;
-    padding: 8px 12px;
-    transition: 0.3s;
+    font-weight: 700;
+    padding: 12px 22px;
+    border-radius: 14px;
+    transition: 0.25s ease;
+}
+
+nav ul a:hover {
+    background: rgba(79, 172, 254, 0.20);
+    color: #0369a1;
+    transform: translateY(-1px);
+}
+
+nav ul li.active a {
+    background: linear-gradient(120deg, #4facfe, #00cffe);
+    color: white;
+    box-shadow: 0 6px 14px rgba(79, 172, 254, 0.35);
 }
 
 nav ul a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -3px;
-    width: 0%;
-    height: 2px;
-    background: #4facfe;
-    transition: 0.3s;
-}
-
-nav ul a:hover::after {
-    width: 100%;
-}
-
-nav ul li.active a::after {
-    width: 100%;
+    display: none;
 }
 
 #content {
-    padding: 25px;
+    padding: 28px 34px;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+#content h1,
+#content h2,
+#content h3 {
+    margin-top: 0;
+    color: #0f172a;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
 #content img {
     float: right;
     width: 23em;
-    margin: 0 0 20px 20px;
-    border-radius: 12px;
-    border: 2px solid rgba(79, 172, 254, 0.4);
+    max-width: 45%;
+    margin: 0 0 22px 24px;
+    border-radius: 18px;
+    border: 3px solid rgba(79, 172, 254, 0.35);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
 }
 
 footer {
-    margin-top: 15px;
-    padding: 12px;
+    margin-top: 10px;
+    padding: 16px;
     text-align: center;
     font-size: 14px;
+    color: #334155;
 }
 
 .logo {
-    width: 40px;
+    width: 44px;
     margin: 10px auto;
+    display: block;
 }
 
-
-@media (max-width: 768px){
-
-    body{
-        padding:10px;
+@media (max-width: 768px) {
+    body {
+        padding: 12px;
     }
 
-    nav ul{
-        flex-direction: column;
+    div#wrapper {
+        gap: 12px;
+    }
+
+    header {
         align-items: center;
-        gap: 10px;
+        text-align: center;
+        padding: 20px;
+    }
+
+    header .header-top {
+        flex-direction: column;
+    }
+
+    header h1 {
+        font-size: 24px;
+        letter-spacing: -0.5px;
+    }
+
+    header p,
+    header div:not(.header-top) {
+        font-size: 16px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
     }
 
     nav ul li.login {
-        margin-left: 0; 
+        margin-left: 0;
     }
 
-    #content img{
-        float:none;
-        display:block;
-        width:100%;
-        max-width:350px;
-        margin:15px auto;
+    nav ul a {
+        width: 100%;
+        text-align: center;
     }
 
-    header{
-        flex-direction: column;
-        text-align:center;
+    #content {
+        padding: 22px;
+    }
+
+    #content img {
+        float: none;
+        display: block;
+        width: 100%;
+        max-width: 360px;
+        margin: 18px auto;
     }
 }

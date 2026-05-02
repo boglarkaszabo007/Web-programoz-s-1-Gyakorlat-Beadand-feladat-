@@ -35,7 +35,6 @@ if (session_status() === PHP_SESSION_NONE) {
             background-color: rgba(255, 255, 255, 0.25);
         }
 
-        /* ===== GOMB STÍLUS ===== */
         button {
             padding: 6px 12px;
             border: none;
@@ -46,7 +45,6 @@ if (session_status() === PHP_SESSION_NONE) {
             transition: 0.2s;
         }
 
-        /* Törlés - piros */
         .delete-btn {
             background-color: #e74c3c;
         }
@@ -54,7 +52,6 @@ if (session_status() === PHP_SESSION_NONE) {
             background-color: #c0392b;
         }
 
-        /* Szerkesztés - világoskék */
         .edit-btn {
             background-color: #3498db;
         }
@@ -62,7 +59,6 @@ if (session_status() === PHP_SESSION_NONE) {
             background-color: #2980b9;
         }
 
-        /* Submit gomb (extra, hogy ez is szép legyen) */
         #SubmitBtn {
             background-color: #2ecc71;
         }
@@ -76,7 +72,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <h2 style="text-align:center;">Kutatók adatai</h2>
 
-<!-- HOZZÁADÁS FORM -->
 <form method="post" action="/Feltalalokgyak/logicals/crudkutato.php" style="width:80%; margin:auto;">
     <h3>Új kutató / Módosítás</h3>
     
@@ -121,7 +116,7 @@ if (session_status() === PHP_SESSION_NONE) {
     function CreateFunctions(RecordData) {
         const Cell = document.createElement('td');
         
-        // ===== TÖRLÉS GOMB =====
+        //TÖRLÉS GOMB 
         const Removebtn = document.createElement('button');
         Removebtn.textContent = "Törlés";
         Removebtn.classList.add("delete-btn");
@@ -142,7 +137,7 @@ if (session_status() === PHP_SESSION_NONE) {
             }
         });
 
-        // ===== SZERKESZTÉS GOMB =====
+        // SZERKESZTÉS GOMB
         const Updatebtn = document.createElement('button');
         Updatebtn.textContent = "Szerkesztés";
         Updatebtn.classList.add("edit-btn");
