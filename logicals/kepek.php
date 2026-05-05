@@ -39,7 +39,6 @@ try {
             ':uid' => $_SESSION['felhasznalo_id']
         ));
 
-        // 🔥 ÁTIRÁNYÍTÁS
         header("Location: /Feltalalokgyak/index.php?kepek");
         exit;
     }

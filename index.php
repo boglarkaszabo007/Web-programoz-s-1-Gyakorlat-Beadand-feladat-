@@ -30,14 +30,12 @@ if ($oldal != "") {
     $keres = $oldalak['/'];
 }
 
-/* DB */
 include "Database/database.php";
 
 $sql = "SELECT * FROM kutato";
 $adatok = [];
 
 try {
-    // PDO esetén a query() egy PDOStatement objektumot ad vissza
     $result = $conn->query($sql);
 
     if ($result) {
@@ -49,5 +47,4 @@ try {
     $hiba_uzenet = $e->getMessage();
 }
 
-/* FONTOS: EZ KELL VISSZA */
 include "templates/index.tpl.php";

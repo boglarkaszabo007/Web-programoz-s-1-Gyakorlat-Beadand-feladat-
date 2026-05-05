@@ -192,8 +192,6 @@ if (session_status() === PHP_SESSION_NONE) {
     document.addEventListener("DOMContentLoaded", GetData);
 
     const params = new URLSearchParams(window.location.search);
-
-    //errorok frontend része
     const error = params.get("error");
 
     if (error) {
